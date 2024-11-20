@@ -6,11 +6,14 @@ authors = ["Dan Joa <parrymanta@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "~3.11.9"
+python = "3.11.9"
 flask = "^3.1.0"
 docling = "*"
 gunicorn = "^21.2.0"
 deepsearch-glm = "*"
+docling-parse = "*"
+docling-core = "*"
+docling-ibm-models = "*"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0"
