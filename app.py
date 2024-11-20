@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from docling import Document
+from docling.document_converter import DocumentConverter
 import os
 import tempfile
 
@@ -16,22 +16,29 @@ def parse_pdf():
         return jsonify({'error': 'No selected file'}), 400
 
     if not file.filename.lower().endswith('.pdf'):
-        return jsonify({'error': 'Invalid file type. Only PDFs are allowed.'}), 400
+        return jsonify({'error': 'File must be a PDF'}), 400
+
+    # Save uploaded file to temp directory
+    temp_dir = tempfile.mkdtemp()
+    temp_path = os.path.join(temp_dir, file.filename)
+    file.save(temp_path)
 
     try:
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
-            file.save(temp_file.name)
-            temp_file_path = temp_file.name
-
-        doc = Document(temp_file_path)
-        parsed_data = doc.to_dict()
-
-        os.remove(temp_file_path)
-
-        return jsonify(parsed_data), 200
-
+        # Convert PDF using docling
+        converter = DocumentConverter()
+        result = converter.convert(temp_path)
+        markdown_text = result.document.export_to_markdown()
+        
+        return jsonify({
+            'markdown': markdown_text
+        })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    finally:
+        # Cleanup temp file
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        os.rmdir(temp_dir)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)
