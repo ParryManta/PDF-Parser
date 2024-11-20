@@ -6,10 +6,14 @@ authors = ["Dan Joa <parrymanta@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.13.0"
+python = ">=3.9,<3.13"
 flask = "^3.1.0"
-docling = "^2.6.0"
-numpy = ">=2.1.0,<3.0.0"
+docling = "*"
+gunicorn = "^21.2.0"
+deepsearch-glm = "*"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0"
 
 [build-system]
 requires = ["poetry-core"]
